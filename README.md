@@ -33,5 +33,5 @@ https://bbuseruploads.s3.amazonaws.com/e2740454-6996-43a6-8eb1-4cbdaae86ddd/down
               -CS pin10 Changable, See //SetupSD below.
 
   created 2018
-  by Stephen McBain http://mcbainsite.duckdns.org
+  by Stephen McBain
   */
