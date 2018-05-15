@@ -13,6 +13,8 @@
 
   created 2018
   by Stephen McBain <http://mcbainsite.duckdns.org>
+  
+  Changes to Code to include Date in File Name
 */
 #include <SPI.h>
 #include <SD.h>
@@ -280,5 +282,3 @@ void loop()
     }
   }
 }
-
-
