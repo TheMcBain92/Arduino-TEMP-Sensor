@@ -73,7 +73,7 @@ void setup()
 
   //LCD Welcome Message
   lcd.home(); // go home on LCD
-  lcd.print("TheMcBain Temp V0.2");
+  lcd.print("TheMcBain Temp V0.2a");
   delay(3000);
 
   //SetupSD Card
@@ -94,9 +94,11 @@ void setup()
     dataFile.print(", ");
     dataFile.println(rtc.getTimeStr());
     dataFile.close();
-    SD.remove("temps.txt");
     Serial.println("Writing headder");
-    dataFile = SD.open("temps.txt", FILE_WRITE);
+    String filename = "temps " + String(rtc.getDateStr()) + ".txt";
+    char str[16] = {0};
+    filename.toCharArray(str, 16);
+    dataFile = SD.open(str, FILE_WRITE);
     dataFile.println("Temprature Log");
     dataFile.println("Written By Stephen McBain");
     dataFile.println();
@@ -224,25 +226,58 @@ void loop()
   if (minute() == 00 || minute() == 10 || minute() == 20 || minute() == 30 || minute() == 40 || minute() == 50) {
     sensors.requestTemperatures(); // Send the command to get temperature readings
     /********************************************************************/
-    dataFile = SD.open("temps.txt", FILE_WRITE);
-    dataFile.print(rtc.getTimeStr());
-    dataFile.print(" ");
-    dataFile.print("S1:");
-    dataFile.print(" ");
-    dataFile.print(sensors.getTempCByIndex(0));
-    dataFile.print(" ");
-    dataFile.print("S2:");
-    dataFile.print(" ");
-    dataFile.println(sensors.getTempCByIndex(1));
-    dataFile.print(" ");
-    dataFile.print("S3:");
-    dataFile.print(" ");
-    dataFile.print(sensors.getTempCByIndex(2));
-    dataFile.print(" ");
-    dataFile.print("S4:");
-    dataFile.print(" ");
-    dataFile.println(sensors.getTempCByIndex(3));
-    dataFile.close();
+    
+    String filename = "temps " + String(rtc.getDateStr()) + ".txt";
+    char str[16] = {0};
+    filename.toCharArray(str, 16);
+    if(SD.exists(str)) {
+      dataFile = SD.open(str, FILE_WRITE);
+      dataFile.print(rtc.getTimeStr());
+      dataFile.print(" ");
+      dataFile.print("S1:");
+      dataFile.print(" ");
+      dataFile.print(sensors.getTempCByIndex(0));
+      dataFile.print(" ");
+      dataFile.print("S2:");
+      dataFile.print(" ");
+      dataFile.println(sensors.getTempCByIndex(1));
+      dataFile.print(" ");
+      dataFile.print("S3:");
+      dataFile.print(" ");
+      dataFile.print(sensors.getTempCByIndex(2));
+      dataFile.print(" ");
+      dataFile.print("S4:");
+      dataFile.print(" ");
+      dataFile.println(sensors.getTempCByIndex(3));
+      dataFile.close();
+    } else {
+      dataFile = SD.open(filename, FILE_WRITE);
+      dataFile.println("Temprature Log");
+      dataFile.println("Written By Stephen McBain");
+      dataFile.println();
+      dataFile.println(rtc.getDateStr());
+      dataFile.println(" ");
+      dataFile.println("Data");
+      dataFile.println();
+      dataFile.print(rtc.getTimeStr());
+      dataFile.print(" ");
+      dataFile.print("S1:");
+      dataFile.print(" ");
+      dataFile.print(sensors.getTempCByIndex(0));
+      dataFile.print(" ");
+      dataFile.print("S2:");
+      dataFile.print(" ");
+      dataFile.println(sensors.getTempCByIndex(1));
+      dataFile.print(" ");
+      dataFile.print("S3:");
+      dataFile.print(" ");
+      dataFile.print(sensors.getTempCByIndex(2));
+      dataFile.print(" ");
+      dataFile.print("S4:");
+      dataFile.print(" ");
+      dataFile.println(sensors.getTempCByIndex(3));
+      dataFile.close();
+    }
   }
 }
 
