@@ -233,7 +233,7 @@ void loop()
     dataFile.print(" ");
     dataFile.print("S2:");
     dataFile.print(" ");
-    dataFile.println(sensors.getTempCByIndex(1));
+    dataFile.print(sensors.getTempCByIndex(1));
     dataFile.print(" ");
     dataFile.print("S3:");
     dataFile.print(" ");
