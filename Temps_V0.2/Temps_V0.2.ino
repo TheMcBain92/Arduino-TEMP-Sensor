@@ -221,7 +221,7 @@ void loop()
       lcd.print(" ");
     }
   }
-  if (minute() == 00 || minute() == 10 || minute() == 20 || minute() == 30 || minute() == 40 || minute() == 50) {
+  if (((minute() == 00) && (second() == 00)) || ((minute() == 10) && (second() == 00)) || ((minute() == 20) && (second() == 00)) || ((minute() == 30) && (second() == 0)) || ((minute() == 40) && (second() == 0)) || ((minute() == 50) && (second() == 0))) {
     sensors.requestTemperatures(); // Send the command to get temperature readings
     /********************************************************************/
     dataFile = SD.open("temps.txt", FILE_WRITE);
