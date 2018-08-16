@@ -73,11 +73,18 @@ void setup()
 
   //LCD Welcome Message
   lcd.home(); // go home on LCD
-  lcd.print("TheMcBain Temp V0.2");
+  lcd.print(" TheMcBain Temp Log");
+  lcd.setCursor(7, 1);
+  lcd.print("V0.2.1");
+  lcd.setCursor(2, 3);
+  lcd.print("mcbainsite.co.uk");
   delay(3000);
 
   //SetupSD Card
   Serial.print("\nInitializing SD card...");
+  lcd.clear();
+  lcd.home();
+  lcd.print("Initializing Log...");
   lcd.setCursor(0, 2);
   lcd.print("SD Card...");
   //Change 10 below to Set CS Pin
