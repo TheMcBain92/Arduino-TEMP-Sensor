@@ -73,7 +73,7 @@ void setup()
 
   //LCD Welcome Message
   lcd.home(); // go home on LCD
-  lcd.print("TheMcBain Temp V0.2");
+  lcd.print("TheMcBain Temp V0.2.2");
   delay(3000);
 
   //SetupSD Card
@@ -116,7 +116,7 @@ void headder() //Setup LCD with logging active message
 {
   lcd.clear();
   lcd.home();
-  lcd.print("Temp:    S1:");
+  lcd.print("   Temp: S1:");
   lcd.setCursor(9, 1);
   lcd.print("S2:");
   lcd.setCursor(9, 2);
@@ -133,7 +133,7 @@ void headderNOSD() //Setup LCD with logging inactive message
 {
   lcd.clear();
   lcd.home();
-  lcd.print("Temp:    S1:");
+  lcd.print("   Temp: S1:");
   lcd.setCursor(9, 1);
   lcd.print("S2:");
   lcd.setCursor(9, 2);
