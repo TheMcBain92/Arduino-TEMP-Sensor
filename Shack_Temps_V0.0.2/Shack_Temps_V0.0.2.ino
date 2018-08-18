@@ -44,7 +44,7 @@ DallasTemperature sensors(&oneWire);
 #define D6_pin 6
 #define D7_pin 7
 //Set temp allert marker temprature
-const int allert = 32;
+const int allert = 40;
 
 //Setup LCD Pins etc...
 LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
@@ -135,7 +135,7 @@ void headder() //Setup LCD with logging active message
   lcd.setCursor(10, 2);
   lcd.print("HF :");
   lcd.setCursor(0, 3);
-  lcd.print("S5 :");
+  lcd.print("ATV:");
   lcd.setCursor(10, 3);
   lcd.print("S6 :");
 }
@@ -144,15 +144,19 @@ void headderNOSD() //Setup LCD with logging inactive message
 {
   lcd.clear();
   lcd.home();
-  lcd.print("Temp Log inActive");
+  lcd.print("Temp Log Active");
   lcd.setCursor(0, 1);
   lcd.print("VHF:");
-  lcd.setCursor(11, 1);
-  lcd.print("IN:");
+  lcd.setCursor(10, 1);
+  lcd.print("IN :");
   lcd.setCursor(0, 2);
   lcd.print("OUT:");
   lcd.setCursor(10, 2);
-  lcd.print("HF:");
+  lcd.print("HF :");
+  lcd.setCursor(0, 3);
+  lcd.print("ATV:");
+  lcd.setCursor(10, 3);
+  lcd.print("S6 :");
 }
 
 void loop()
@@ -161,7 +165,7 @@ void loop()
   //Sensor 1
   lcd.setCursor(4, 1);
   if (sensors.getTempCByIndex(0) == -127.00) {
-    lcd.print("N/A");
+    lcd.print("N/A  ");
   } else {
     if (sensors.getTempCByIndex(0) >= allert) {
       lcd.print(sensors.getTempCByIndex(0)); // Why "byIndex"?
@@ -178,7 +182,7 @@ void loop()
   //Sensor 2
   lcd.setCursor(14, 1);
   if (sensors.getTempCByIndex(1) == -127.00) {
-    lcd.print("N/A");
+    lcd.print("N/A  ");
   } else {
     if (sensors.getTempCByIndex(1) >= allert) {
       lcd.print(sensors.getTempCByIndex(1)); // Why "byIndex"?
@@ -195,7 +199,7 @@ void loop()
   //Sensor 3
   lcd.setCursor(4, 2);
   if (sensors.getTempCByIndex(2) == -127.00) {
-    lcd.print("N/A");
+    lcd.print("N/A  ");
   } else {
     if (sensors.getTempCByIndex(2) >= allert) {
       lcd.print(sensors.getTempCByIndex(0)); // Why "byIndex"?
@@ -212,7 +216,7 @@ void loop()
   //Sensor 4
   lcd.setCursor(14, 2);
   if (sensors.getTempCByIndex(3) == -127.00) {
-    lcd.print("N/A");
+    lcd.print("N/A  ");
   } else {
     if (sensors.getTempCByIndex(3) >= allert) {
       lcd.print(sensors.getTempCByIndex(3)); // Why "byIndex"?
@@ -229,7 +233,7 @@ void loop()
     //Sensor 5
   lcd.setCursor(4, 3);
   if (sensors.getTempCByIndex(4) == -127.00) {
-    lcd.print("N/A");
+    lcd.print("N/A  ");
   } else {
     if (sensors.getTempCByIndex(4) >= allert) {
       lcd.print(sensors.getTempCByIndex(0)); // Why "byIndex"?
@@ -246,7 +250,7 @@ void loop()
   //Sensor 6
   lcd.setCursor(14, 3);
   if (sensors.getTempCByIndex(5) == -127.00) {
-    lcd.print("N/A");
+    lcd.print("N/A  ");
   } else {
     if (sensors.getTempCByIndex(5) >= allert) {
       lcd.print(sensors.getTempCByIndex(3)); // Why "byIndex"?
@@ -282,7 +286,7 @@ void loop()
     dataFile.print(" ");
     dataFile.println(sensors.getTempCByIndex(3));
     dataFile.print(" ");
-    dataFile.print("S5:");
+    dataFile.print("23cm ATV RX:");
     dataFile.print(" ");
     dataFile.println(sensors.getTempCByIndex(4));
     dataFile.print(" ");
