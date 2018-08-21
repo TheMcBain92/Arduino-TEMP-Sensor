@@ -24,9 +24,9 @@ File dataFile;
 #include <Wire.h> //I2C Communication
 #include <LiquidCrystal_I2C.h>
 #include <DS3232RTC.h>
-#include <DS3231.h>
+//#include <DS3231.h>
 // -- Init the DS3231 using the hardware interface
-DS3231  rtc(SDA, SCL);
+//DS3231  rtc(SDA, SCL);
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
@@ -64,9 +64,15 @@ DeviceAddress ATV = { 0x28, 0xFF, 0xCF, 0x53, 0x32, 0x18, 0x01, 0x00 };
 LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
 
 //Set temp allert marker temprature
-const int allert = 40;
+const PROGMEM int allert = 40;
 
 int SDpresent = 0; // -- Initialze variable for SD logging
+float S1;
+float S2;
+float S3;
+float S4;
+float S5;
+//float S6;
 
 void setup()
 {
@@ -80,22 +86,22 @@ void setup()
 // -- Check Real Time Clock Is Set
   setSyncProvider(RTC.get);  // Library function to get the time from the RTC module. DS3232RTC.h Library
   if (timeStatus() != timeSet)
-    Serial.println("System Time Cannot be Set. Check Connections.");
+    Serial.println(F("System Time Cannot be Set. Check Connections."));
   else
-    Serial.println("System Time is Set.");
+    Serial.println(F("System Time is Set."));
 
   // Initialize the rtc clock. DS3231.h Library
-  rtc.begin();
+//  rtc.begin();
 
   // Start up the sensors library
-  Serial.print("Locating devices...");
+  Serial.print(F("Locating devices..."));
   sensors.begin();
-  Serial.print("Found ");
+  Serial.print(F("Found "));
   Serial.print(sensors.getDeviceCount(), DEC);
-  Serial.println(" devices.");
+  Serial.println(F(" devices."));
 
   // set the resolution to 10 bit (Can be 9 to 12 bits .. lower is faster)
-  sensors.setResolution(10);
+  sensors.setResolution(11);
   //sensors.setResolution(IN, 10);
   //sensors.setResolution(OUT, 10);
   //sensors.setResolution(HF, 10);
@@ -112,18 +118,18 @@ void setup()
   delay(3000);
 
   //SetupSD Card
-  Serial.print("\nInitializing SD card...");
+  Serial.print(F("Initializing SD card..."));
   lcd.clear();
   lcd.home();
-  lcd.print("Initializing Log...");
+  lcd.print(F("Initializing Log..."));
   lcd.setCursor(0, 2);
-  lcd.print("SD Card...");
+  lcd.print(F("SD Card..."));
 
   // -- Check for SD Card and Activate Logging
   // -- Change 10 below to Set CS Pin
   if (!SD.begin(10)) {
-    Serial.println("SD inisalisation Failed");
-    lcd.print("ERROR!");
+    Serial.println(F("SD inisalisation Failed"));
+    lcd.print(F("ERROR!"));
     delay(2000);
     headderNOSD();
     return;
@@ -131,23 +137,32 @@ void setup()
     SDpresent = 1;
     dataFile = SD.open("startup.txt", FILE_WRITE);
     dataFile.print("Startup logged.....");
-    dataFile.print(rtc.getDateStr());
+//    dataFile.print(rtc.getDateStr());
+    dataFile.print(day());
+    dataFile.print(month());
+    dataFile.print(year());
     dataFile.print(", ");
-    dataFile.println(rtc.getTimeStr());
+//    dataFile.println(rtc.getTimeStr());
+    dataFile.print(hour());
+    dataFile.print(minute());
+    dataFile.print(second());
     dataFile.close();
     SD.remove("temps.txt");
-    Serial.println("Writing headder");
+    Serial.print(F("Writing headder...."));
     dataFile = SD.open("temps.txt", FILE_WRITE);
     dataFile.println("Temprature Log");
     dataFile.println("Written By Stephen McBain");
     dataFile.println();
-    dataFile.println(rtc.getDateStr());
+//    dataFile.println(rtc.getDateStr());
+    dataFile.print(day());
+    dataFile.print(month());
+    dataFile.print(year());
     dataFile.println(" ");
     dataFile.println("Data");
     dataFile.println();
     dataFile.close();
-    Serial.println("SD Ready");
-    lcd.print("Ready!");
+    Serial.println(F("SD Ready"));
+    lcd.print(F("Ready!"));
     delay(2000);
     headder();
   }
@@ -155,51 +170,56 @@ void setup()
 
 void headder() //Setup LCD with logging active message
 {
+  Serial.println(F("Headder With Logging"));
   lcd.clear();
   lcd.home();
-  lcd.print("Temp Log Active");
-  lcd.setCursor(0, 1);
-  lcd.print("VHF:");
-  lcd.setCursor(10, 1);
-  lcd.print("IN :");
-  lcd.setCursor(0, 2);
-  lcd.print("OUT:");
-  lcd.setCursor(10, 2);
-  lcd.print("HF :");
-  lcd.setCursor(0, 3);
-  lcd.print("ATV:");
-  lcd.setCursor(10, 3);
-  lcd.print("S6 :");
+  lcd.print(F("Temp Log Active"));
+  layout();
 }
 
 void headderNOSD() //Setup LCD with logging inactive message
 {
+  Serial.println(F("Headder With no Logging"));
   lcd.clear();
   lcd.home();
-  lcd.print("Temp Log Active");
+  lcd.print("Temp Log inActive");
+  layout();
+}
+
+void layout()// standard layout of screen
+{
   lcd.setCursor(0, 1);
-  lcd.print("VHF:");
+  lcd.print(F("VHF:"));
   lcd.setCursor(10, 1);
-  lcd.print("IN :");
+  lcd.print(F("IN :"));
   lcd.setCursor(0, 2);
-  lcd.print("OUT:");
+  lcd.print(F("OUT:"));
   lcd.setCursor(10, 2);
-  lcd.print("HF :");
+  lcd.print(F("HF :"));
   lcd.setCursor(0, 3);
-  lcd.print("ATV:");
+  lcd.print(F("ATV:"));
   lcd.setCursor(10, 3);
-  lcd.print("S6 :");
+  lcd.print(F("S6 :N/A"));
+  loop;
 }
 
 void loop()
 {
-  sensors.requestTemperatures(); // Send the command to get temperature readings
-float S1 = sensors.getTempCByIndex(0);
-float S2 = sensors.getTempCByIndex(1);
-float S3 = sensors.getTempCByIndex(2);
-float S4 = sensors.getTempCByIndex(3);
-float S5 = sensors.getTempCByIndex(4);
-float S6 = sensors.getTempCByIndex(5);
+  Serial.println(F("loop started"));
+//sensors.requestTemperatures(); // Send the command to get temperature readings
+sensors.requestTemperaturesByAddress(VHF); // Send the command to get temperatures
+sensors.requestTemperaturesByAddress(IN); // Send the command to get temperatures
+sensors.requestTemperaturesByAddress(OUT); // Send the command to get temperatures
+sensors.requestTemperaturesByAddress(HF); // Send the command to get temperatures
+sensors.requestTemperaturesByAddress(ATV); // Send the command to get temperatures
+//sensors.requestTemperaturesByAddress(tempSensor); // Send the command to get temperatures
+
+float S1 = sensors.getTempC(VHF);
+float S2 = sensors.getTempC(IN);
+float S3 = sensors.getTempC(OUT);
+float S4 = sensors.getTempC(HF);
+float S5 = sensors.getTempC(ATV);
+//float S6 = sensors.getTempCByIndex(5);
   
   //Sensor 1
   lcd.setCursor(4, 1);
@@ -287,29 +307,33 @@ float S6 = sensors.getTempCByIndex(5);
     }
   }
   //Sensor 6
-  lcd.setCursor(14, 3);
-  if (S6 == -127.00) {
-    lcd.print("N/A   ");
-  } else {
-    if (S6 >= allert) {
-      lcd.print(S6); // Why "byIndex"?
+//  lcd.setCursor(14, 3);
+//  if (S6 == -127.00) {
+//    lcd.print("N/A   ");
+//  } else {
+//    if (S6 >= allert) {
+//      lcd.print(S6); // Why "byIndex"?
       // You can have more than one DS18B20 on the same bus.
       // 0 refers to the first IC on the wire
-      lcd.print("*");
-    } else {
-      lcd.print(S6); // Why "byIndex"?
+//      lcd.print("*");
+//    } else {
+//      lcd.print(S6); // Why "byIndex"?
       // You can have more than one DS18B20 on the same bus.
       // 0 refers to the first IC on the wire
-      lcd.print(" ");
-    }
-  }
+//      lcd.print(" ");
+//    }
+//  }
 
   if (SDpresent == 1) {
     if (((minute() == 00) && (second() == 00)) || ((minute() == 10) && (second() == 00)) || ((minute() == 20) && (second() == 00)) || ((minute() == 30) && (second() == 0)) || ((minute() == 40) && (second() == 0)) || ((minute() == 50) && (second() == 0))) {
       //sensors.requestTemperatures(); // Send the command to get temperature readings
       /********************************************************************/
+      Serial.println(F("Data write"));
       dataFile = SD.open("temps.txt", FILE_WRITE);
-      dataFile.print(rtc.getTimeStr());
+      dataFile.print(day());
+      dataFile.print(hour());
+      dataFile.print(minute());
+      dataFile.print(second());
       dataFile.print(" ");
       dataFile.print("VHF:");
       dataFile.print(" ");
@@ -330,16 +354,14 @@ float S6 = sensors.getTempCByIndex(5);
       dataFile.print("23cm ATV RX:");
       dataFile.print(" ");
       dataFile.println(S5);
-      dataFile.print(" ");
-      dataFile.print("S6:");
-      dataFile.print(" ");
-      dataFile.println(S6);
+//      dataFile.print(" ");
+//      dataFile.print("S6:");
+//      dataFile.print(" ");
+//      dataFile.println(S6);
       dataFile.close();
     }
-  } else {
-  return;
-    }
-  delay(1000);
+  }
+  delay(500);
   }
 
 
