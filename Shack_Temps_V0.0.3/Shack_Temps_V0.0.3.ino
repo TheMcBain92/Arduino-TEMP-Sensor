@@ -14,7 +14,7 @@
   created 2018
   by Stephen McBain <http://mcbainsite.co.uk>
 */
-
+const char *codeversion = "V0.0.3";
 //Load needed libries / Basic Setup
 #include <SPI.h>
 #include <SD.h>
@@ -77,21 +77,29 @@ float S5;
 void setup()
 {
   Serial.begin(9600); //Start Serial
-  lcd.begin (20, 4); //LCD Size (horrizontal, Vertical) 
-
-  // LCD Backlight ON
-  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
-  lcd.setBacklight(HIGH);
-
-// -- Check Real Time Clock Is Set
+  // -- Check Real Time Clock Is Set
   setSyncProvider(RTC.get);  // Library function to get the time from the RTC module. DS3232RTC.h Library
   if (timeStatus() != timeSet)
     Serial.println(F("System Time Cannot be Set. Check Connections."));
   else
     Serial.println(F("System Time is Set."));
+  
+  Serial.print(day());
+  Serial.print("/");
+  Serial.print(month());
+  Serial.print("/");
+  Serial.print(year());
+  Serial.print(", ");
+  Serial.print(hour());
+  Serial.print(":");
+  Serial.print(minute());
+  Serial.print(":");
+  Serial.println(second());
+  lcd.begin (20, 4); //LCD Size (horrizontal, Vertical) 
 
-  // Initialize the rtc clock. DS3231.h Library
-//  rtc.begin();
+  // LCD Backlight ON
+  lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
+  lcd.setBacklight(HIGH);
 
   // Start up the sensors library
   Serial.print(F("Locating devices..."));
@@ -109,10 +117,10 @@ void setup()
   //sensors.setResolution(S6, 10);
 
   // -- LCD Welcome Message
-  lcd.setCursor(4, 0); // go home on LCD
-  lcd.print("Shack Temps");
+  lcd.setCursor(1, 0); // go home on LCD
+  lcd.print("Shack Temp Monitor");
   lcd.setCursor(7, 1);
-  lcd.print("V0.0.3");
+  lcd.print(codeversion);
   lcd.setCursor(2, 3);
   lcd.print("mcbainsite.co.uk");
   delay(3000);
@@ -137,23 +145,11 @@ void setup()
     SDpresent = 1;
     dataFile = SD.open("startup.txt", FILE_WRITE);
     dataFile.print("Startup logged.....");
-//    dataFile.print(rtc.getDateStr());
-    dataFile.print(day());
-    dataFile.print(month());
-    dataFile.print(year());
-    dataFile.print(", ");
-//    dataFile.println(rtc.getTimeStr());
-    dataFile.print(hour());
-    dataFile.print(minute());
-    dataFile.print(second());
-    dataFile.close();
-    SD.remove("temps.txt");
     Serial.print(F("Writing headder...."));
-    dataFile = SD.open("temps.txt", FILE_WRITE);
-    dataFile.println("Temprature Log");
+    dataFile.print("Shack Temp Monitor ");
+    dataFile.print(codeversion);
     dataFile.println("Written By Stephen McBain");
     dataFile.println();
-//    dataFile.println(rtc.getDateStr());
     dataFile.print(day());
     dataFile.print(month());
     dataFile.print(year());
@@ -161,6 +157,7 @@ void setup()
     dataFile.println("Data");
     dataFile.println();
     dataFile.close();
+    SD.remove("temps.csv");
     Serial.println(F("SD Ready"));
     lcd.print(F("Ready!"));
     delay(2000);
@@ -329,34 +326,41 @@ float S5 = sensors.getTempC(ATV);
       //sensors.requestTemperatures(); // Send the command to get temperature readings
       /********************************************************************/
       Serial.println(F("Data write"));
-      dataFile = SD.open("temps.txt", FILE_WRITE);
+      dataFile = SD.open("temps.csv", FILE_WRITE);
       dataFile.print(day());
+      dataFile.print("/");
+      dataFile.print(month());
+      dataFile.print("/");
+      dataFile.print(year());
+      dataFile.print(",");
       dataFile.print(hour());
+      dataFile.print(":");
       dataFile.print(minute());
+      dataFile.print(":");
       dataFile.print(second());
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print("VHF:");
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print(S1);
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print("IN:");
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print(S2);
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print("OUT:");
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print(S3);
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print("HF:");
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.println(S4);
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.print("23cm ATV RX:");
-      dataFile.print(" ");
+      dataFile.print(",");
       dataFile.println(S5);
-//      dataFile.print(" ");
+//      dataFile.print(",");
 //      dataFile.print("S6:");
-//      dataFile.print(" ");
+//      dataFile.print(",");
 //      dataFile.println(S6);
       dataFile.close();
     }
