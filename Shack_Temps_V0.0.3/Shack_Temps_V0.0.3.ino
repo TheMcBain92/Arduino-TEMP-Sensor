@@ -83,18 +83,18 @@ void setup()
     Serial.println(F("System Time Cannot be Set. Check Connections."));
   else
     Serial.println(F("System Time is Set."));
+    Serial.print(day());
+    Serial.print("/");
+    Serial.print(month());
+    Serial.print("/");
+    Serial.print(year());
+    Serial.print(", ");
+    Serial.print(hour());
+    Serial.print(":");
+    Serial.print(minute());
+    Serial.print(":");
+    Serial.println(second());
   
-  Serial.print(day());
-  Serial.print("/");
-  Serial.print(month());
-  Serial.print("/");
-  Serial.print(year());
-  Serial.print(", ");
-  Serial.print(hour());
-  Serial.print(":");
-  Serial.print(minute());
-  Serial.print(":");
-  Serial.println(second());
   lcd.begin (20, 4); //LCD Size (horrizontal, Vertical) 
 
   // LCD Backlight ON
@@ -146,15 +146,13 @@ void setup()
     dataFile = SD.open("startup.txt", FILE_WRITE);
     dataFile.print("Startup logged.....");
     Serial.print(F("Writing headder...."));
-    dataFile.print("Shack Temp Monitor ");
-    dataFile.print(codeversion);
+    dataFile.println("Shack Temp Monitor");
+    dataFile.println(codeversion);
     dataFile.println("Written By Stephen McBain");
     dataFile.println();
     dataFile.print(day());
     dataFile.print(month());
-    dataFile.print(year());
-    dataFile.println(" ");
-    dataFile.println("Data");
+    dataFile.println(year());
     dataFile.println();
     dataFile.close();
     SD.remove("temps.csv");
@@ -322,7 +320,7 @@ float S5 = sensors.getTempC(ATV);
 //  }
 
   if (SDpresent == 1) {
-    if (((minute() == 00) && (second() == 00)) || ((minute() == 10) && (second() == 00)) || ((minute() == 20) && (second() == 00)) || ((minute() == 30) && (second() == 0)) || ((minute() == 40) && (second() == 0)) || ((minute() == 50) && (second() == 0))) {
+    if (((minute() == 00) && (second() >= 28 && second() <= 32)) || ((minute() == 10) && (second() >= 28 && second() <= 32)) || ((minute() == 20) && (second() >= 28 && second() <= 32)) || ((minute() == 30) && (second() >= 28 && second() <= 32)) || ((minute() == 40) && (second() >= 28 && second() <= 32)) || ((minute() == 50) && (second() >= 28 && second() <= 32))) {
       //sensors.requestTemperatures(); // Send the command to get temperature readings
       /********************************************************************/
       Serial.println(F("Data write"));
@@ -353,7 +351,7 @@ float S5 = sensors.getTempC(ATV);
       dataFile.print(",");
       dataFile.print("HF:");
       dataFile.print(",");
-      dataFile.println(S4);
+      dataFile.print(S4);
       dataFile.print(",");
       dataFile.print("23cm ATV RX:");
       dataFile.print(",");
