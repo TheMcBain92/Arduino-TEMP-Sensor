@@ -64,7 +64,7 @@ DeviceAddress ATV = { 0x28, 0xFF, 0xCF, 0x53, 0x32, 0x18, 0x01, 0x00 };
 LiquidCrystal_I2C lcd(I2C_ADDR, En_pin, Rw_pin, Rs_pin, D4_pin, D5_pin, D6_pin, D7_pin);
 
 //Set temp allert marker temprature
-const PROGMEM int allert = 40;
+const PROGMEM int allert = 50;
 
 int SDpresent = 0; // -- Initialze variable for SD logging
 float S1;
@@ -319,7 +319,7 @@ float S5 = sensors.getTempC(ATV);
 //  }
 
   if (SDpresent == 1) {
-    if (((minute() == 00) && (second() >= 29 && second() <= 31)) || ((minute() == 10) && (second() >= 29 && second() <= 31)) || ((minute() == 20) && (second() >= 29 && second() <= 31)) || ((minute() == 30) && (second() >= 29 && second() <= 31)) || ((minute() == 40) && (second() >= 29 && second() <= 31)) || ((minute() == 50) && (second() >= 29 && second() <= 31))) {
+    if (((minute() == 00) && (second() >= 29 && second() <= 30)) || ((minute() == 10) && (second() >= 29 && second() <= 30)) || ((minute() == 20) && (second() >= 29 && second() <= 30)) || ((minute() == 30) && (second() >= 29 && second() <= 30)) || ((minute() == 40) && (second() >= 29 && second() <= 30)) || ((minute() == 50) && (second() >= 29 && second() <= 30))) {
       //sensors.requestTemperatures(); // Send the command to get temperature readings
       /********************************************************************/
       Serial.println(F("Data write"));
