@@ -68,12 +68,14 @@ const PROGMEM int allert = 50;
 
 int SDpresent = 0; // -- Initialze variable for SD logging
 int myh = 0; // -- Variable to set 12 hour time
+//int t1 = 0; // -- Test temp from RTC
 float S1;
 float S2;
 float S3;
 float S4;
 float S5;
 //float S6;
+//float temp;
 
 void setup()
 {
@@ -144,7 +146,7 @@ void setup()
     lcd.print(F("ERROR!"));
     delay(2000);
     //headderNOSD();
-    return;
+    layout();
   } else {
     SDpresent = 1;
     dataFile = SD.open("startup.txt", FILE_WRITE);
@@ -191,6 +193,11 @@ void layout()// standard layout of screen
   lcd.clear();
   currentTD();
   delay(3000);
+  //lcd.clear();
+  //int t1 = RTC.temperature(); // retrieve the value from the DS3232
+  //float temp = t1 / 4; // temperature in Celsius stored in temp
+  //lcd.print(temp);
+  //delay(3000);
   lcd.clear();
   lcd.home();
   lcd.print(F("The McBain Temp Log"));
