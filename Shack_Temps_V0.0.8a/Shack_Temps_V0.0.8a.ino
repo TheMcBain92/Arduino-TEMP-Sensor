@@ -220,41 +220,41 @@ void layout()// standard layout of screen
 
 void currenttime()
 {
-  if(hour() >= 13) {
-    myh = hour() - 12;
-    if(myh < 10) {
-      lcd.print("0");
-    }
-    lcd.print(myh);
-    lcd.print(":");
-    if(minute() < 10) {
-      lcd.print("0");
-    }
-    lcd.print(minute());
-    lcd.print(":");
-    if(second() < 10) {
-      lcd.print("0");
-    }
-    lcd.print(second());
-    lcd.print("pm");
-  } else {
-    if(hour() < 10) {
-      lcd.print("0");
-    }
-    lcd.print(hour());
-    lcd.print(":");
-      if(minute() < 10) {
-    lcd.print("0");
-    }
-    lcd.print(minute());
-    lcd.print(":");
-      if(second() < 10) {
-    lcd.print("0");
-    }
-    lcd.print(second());
-    lcd.print("am");
-  }
-  return;
+//24h Convert
+if(hour() >= 13) {
+  myh = hour() - 12;
+} else {
+  myh = hour();
+}
+
+//Print Hour
+if(myh < 10) {
+  lcd.print(" ");
+}
+lcd.print(myh);
+lcd.print(":");
+
+//Print Minute
+if(minute() < 10) {
+  lcd.print("0");
+}
+lcd.print(minute());
+lcd.print(":");
+
+//Print Second
+if(second() < 10) {
+  lcd.print("0");
+}
+lcd.print(second());
+
+//print am or pm
+if(hour() >= 12) {
+  lcd.print("pm");
+} else {
+  lcd.print("am");
+}
+
+return;
 }
 
 void currentdate()
