@@ -14,7 +14,7 @@
   created 2018
   by Stephen McBain <http://mcbainsite.co.uk>
 */
-const char *codeversion = "V0.0.8a";
+const char *codeversion = "V0.0.9beta";
 //Load needed libries / Basic Setup
 #include <SPI.h>
 #include <SD.h>
@@ -78,6 +78,8 @@ float S5;
 //float temp;
 long previousMillis = 0;
 long interval = 10000;
+byte startup = 1;
+const byte interruptPin = 3;
 
 void setup()
 {
@@ -104,7 +106,8 @@ void setup()
     Serial.println(second());
   
   lcd.begin (20, 4); //LCD Size (horrizontal, Vertical) 
-
+  pinMode(interruptPin, INPUT);
+  attachInterrupt(digitalPinToInterrupt(interruptPin), test, FALLING);
   // LCD Backlight ON
   lcd.setBacklightPin(BACKLIGHT_PIN, POSITIVE);
   lcd.setBacklight(HIGH);
@@ -200,6 +203,7 @@ void layout()// standard layout of screen
   //float temp = t1 / 4; // temperature in Celsius stored in temp
   //lcd.print(temp);
   //delay(3000);
+  startup = 0;
   lcd.clear();
   lcd.home();
   lcd.print(F("The McBain Temp Log"));
@@ -228,30 +232,32 @@ if(hour() >= 13) {
 }
 
 //Print Hour
-if(myh < 10) {
+if(myh <= 9) {
   lcd.print(" ");
 }
 lcd.print(myh);
 lcd.print(":");
 
 //Print Minute
-if(minute() < 10) {
+if(minute() <= 9) {
   lcd.print("0");
 }
 lcd.print(minute());
-lcd.print(":");
 
 //Print Second
-if(second() < 10) {
-  lcd.print("0");
-}
+if(!startup == 1) {
+  lcd.print(":");
+  if(second() <= 9) {
+    lcd.print("0");
+  }
 lcd.print(second());
+}
 
 //print am or pm
 if(hour() >= 12) {
-  lcd.print("p");
+  lcd.print("pm");
 } else {
-  lcd.print("a");
+  lcd.print("am");
 }
 
 return;
@@ -278,11 +284,27 @@ void currentTD()
   lcd.clear();
   lcd.setCursor(4, 0);
   lcd.print("Current Time");
-  lcd.setCursor(5, 2);
+  lcd.setCursor(6, 2);
   currenttime();
   lcd.setCursor(5, 3);
   currentdate();
   return;
+}
+
+void test()
+{
+  noInterrupts();
+  Serial.print("Interupt");
+  lcd.clear();
+  lcd.setCursor(4, 0);
+  lcd.print("Current Time");
+  lcd.setCursor(6, 2);
+  currenttime();
+  lcd.setCursor(5, 3);
+  currentdate();
+  delay(5000);
+  interrupts();
+  layout();
 }
 
 void tempreadprint()
