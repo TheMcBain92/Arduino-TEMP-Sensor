@@ -14,7 +14,7 @@
   created 2018
   by Stephen McBain <http://mcbainsite.co.uk>
 */
-const char *codeversion = "V0.0.8a";
+const char *codeversion = "V0.0.8b";
 //Load needed libries / Basic Setup
 #include <SPI.h>
 #include <SD.h>
@@ -78,6 +78,8 @@ float S5;
 //float temp;
 long previousMillis = 0;
 long interval = 10000;
+int ampm = 0;
+int ampmpre = 2;
 
 void setup()
 {
@@ -228,30 +230,58 @@ if(hour() >= 13) {
 }
 
 //Print Hour
-if(myh < 10) {
-  lcd.print(" ");
+if(myh > 99) {
+  
 }
-lcd.print(myh);
-lcd.print(":");
+else
+{
+  if(myh < 10) {
+   lcd.print(" ");
+  }
+  lcd.print(myh);
+  lcd.print(":");
+}
 
 //Print Minute
-if(minute() < 10) {
-  lcd.print("0");
+if(minute() > 99){
 }
-lcd.print(minute());
-lcd.print(":");
+else
+{
+  if(minute() < 10) {
+    lcd.print("0");
+  }
+  lcd.print(minute());
+  lcd.print(":");
+}
 
 //Print Second
-if(second() < 10) {
-  lcd.print("0");
+if(second() > 99){
 }
-lcd.print(second());
+else
+{
+  if(second() < 10) {
+    lcd.print("0");
+  }
+  lcd.print(second());
+}
 
 //print am or pm
 if(hour() >= 12) {
-  lcd.print("p");
+  ampm = 1;
+}
+else
+{
+  ampm = 0;
+}
+
+if(ampm == ampmpre) {
+  
 } else {
-  lcd.print("a");
+  if(hour() >= 12) {
+  lcd.print("pm");
+  } else {
+  lcd.print("am");
+  }
 }
 
 return;
@@ -462,8 +492,6 @@ return;
 
 void loop()
 {
-lcd.setCursor(10, 3);
-lcd.print("          ");
 lcd.setCursor(10, 3);
 currenttime();
 unsigned long currentMillis = millis();
